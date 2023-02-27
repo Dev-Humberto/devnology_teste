@@ -38,7 +38,6 @@ php artisan storage:link
 
 php artisan serve
 
-Administrador -> username: admin password: Password_T3ste
 
 ##Frontend
 
@@ -53,3 +52,8 @@ npm install --force
 3 - Iniciar a aplicaão e copiar a url para um browser
 
 npm run dev
+
+##
+Administrador -> username: admin password: Password_T3ste
+
+Utilizador normal -> login / criar uma conta
