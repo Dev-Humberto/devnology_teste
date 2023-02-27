@@ -12,6 +12,7 @@ import ProductDetails from "./Pages/ProductDetails";
 import SignIn from "./Pages/SignIn";
 import Register from "./Pages/Register";
 import MyAccount from "./Pages/MyAccount";
+import AdminPage from "./Pages/AdminPage";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Register path="register"/>
         <ProductDetails path="product-details/:productId"/>
         <Cart path="/cart" />
+        <AdminPage path="/admin" />
       </Router>
     </main>
   );

@@ -3,10 +3,9 @@ import { Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
 import { useThemeHook } from '../GlobalComponents/ThemeProvider';
 import { BiSearch } from 'react-icons/bi';
 import SearchFilter from 'react-filter-search';
-import ProductCard from '../components/ProductCard';
+import ProductCardFornecedor2 from './ProductCardFornecedor2';
 
-const Home = () => {
-
+const Fornecedor2 = () => {
     const [theme] = useThemeHook();
     const [searchInput, setSearchInput] = useState('');
     const [productData, setProductData] = useState([]);
@@ -43,9 +42,8 @@ const Home = () => {
                     data={productData}
                     renderResults={results =>(
                         <Row className="justify-content-center">
-                            {console.log(results)}
                             {results.map((item, i)=>(
-                                <ProductCard data={item} key={i} />
+                                <ProductCardFornecedor2 data={item} key={i} />
                             ))}
                         </Row>
                     )}
@@ -56,4 +54,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Fornecedor2;

@@ -7,6 +7,8 @@ import { Link, useNavigate } from "@reach/router";
 import { AiOutlineUser } from 'react-icons/ai';
 import { VscKey } from 'react-icons/vsc';
 
+import axiosClient from "../axios-client";
+
 const SignIn = () => {
     const [loading, setLoading] = useState(false);
     const [theme] = useThemeHook();
@@ -15,27 +17,23 @@ const SignIn = () => {
     const handleSubmit = (event)=>{
         const form = event.currentTarget;
         event.preventDefault();
-        const username = form.username.value;
+        const email = form.email.value;
         const password = form.password.value;
-        if(username && password){
-            setLoading(true);
-            fetch('https://fakestoreapi.com/auth/login',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body:JSON.stringify({
-                    username: username,
-                    password: password
-                })
-            }).then(res=>res.json())
-            .then(json=>sessionStorage.setItem("token", json.token))
-            .catch(error=> console.error(error))
-            .finally(()=>{
-                setLoading(false);
-                navigate('/', {replace: true})
-                alert('Login successfully');
-            })
+        if(email && password){
+           
+            axiosClient.post('login',{email, password}).then((response) => {
+                if(response.status === 200){
+                    localStorage.setItem('USER',JSON.stringify({id: response.data.user.id, name:response.data.user.name, email:response.data.user.email, type:response.data.user.type}));
+                    localStorage.setItem("ACCESS_TOKEN", response.data.token);
+                    //navigate('/', {replace: true})
+                    //alert('Login successfully');
+                    window.location.href = '/';
+                }else{
+                    console.log("Erro=>", response);
+                }
+                
+            });
+
         }
     }
     return (
@@ -45,18 +43,19 @@ const SignIn = () => {
                     <h1 className={`text-center border-bottom pb-3 ${theme? 'text-dark-primary' : 'text-light-primary'}`}>
                         Login
                     </h1>
+                    
                     <Form onSubmit={handleSubmit}>
                         <InputGroup className="mb-4 mt-5">
                             <InputGroup.Text>
                                 <AiOutlineUser size="1.8rem" />
                             </InputGroup.Text>
-                            <Form.Control name="username" type="text" placeholder="Nome de utilizador" minLength={3} required />
+                            <Form.Control name="email" type="email" placeholder="Email" required />
                         </InputGroup>
                         <InputGroup className="mb-4">
                             <InputGroup.Text>
                                 <VscKey size="1.8rem" />
                             </InputGroup.Text>
-                            <Form.Control name="password" type="password" placeholder="Palavra-passe" minLength={6} required />
+                            <Form.Control name="password" type="password" placeholder="Palavra-passe" minLength={8} required />
                         </InputGroup>
                         <Button
                             type="submit"

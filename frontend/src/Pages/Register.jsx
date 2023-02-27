@@ -13,29 +13,37 @@ const Register = () => {
     const [number, setNumber] = useState(null);
     const [theme] = useThemeHook();
     
-
+    const navigate = useNavigate();
+    
     const handleSubmit = (event)=>{
         const form = event.currentTarget;
         event.preventDefault();
-        const name = form.username.value;
+        const name = form.firstName.value;
         const password = form.password.value;
-        const firstname = form.firstName.value;
         const email = form.email.value;
-        const password_confirmation= form.passwordConfirmationRef.value
-        
-        if(name && password && firstname && email && number){
+        const password_confirmation= form.passwordConfirmationRef.value;
+        const username = form.username.value;
+        const phonenumber = number;
+        const address = form.address.value;
+        const type = 'C';//form.email.type;
+
+
+        if(name && password && email && phonenumber){
             setLoading(true);
             /*console.log('call api here');
             console.log(username, password, firstname, lastname, email, number);*/
             
-            axiosClient.post("/signup", {name, password, firstname, email, password_confirmation})
+            axiosClient.post("/signup", {name, password, email, password_confirmation, username, phonenumber, address, type})
             .then((response) => {
-                console.log(response)
-                setLoading(false);
+                console.log(response.data)
+                //setLoading(false);
                 if (response.data.status === 200) {
-                    setUser(response.data.user);
-                    setToken(response.data.token);
-                    return <Navigate to = "/" />
+                    //setUser(response.data.user);
+                    //setToken(response.data.token);
+                    localStorage.setItem('USER',JSON.stringify({id: response.data.user.id, name:response.data.user.name, email:response.data.user.email, type:response.data.user.type}));
+                    localStorage.setItem("ACCESS_TOKEN", response.data.token);
+                    //window.location.href = '/';
+                    navigate('/', {replace: true})
                 }
 
                 if (response.data.status === "failed") {
@@ -77,6 +85,12 @@ const Register = () => {
                                 className="text-dark"
                             />
                         </Form.Group>
+                        
+                        <Form.Group className="mb-3">
+                            <Form.Label>Endereço</Form.Label>
+                            <Form.Control name="address" type="text" placeholder="Endereço" minLength={3} required />
+                        </Form.Group>
+
                         <Form.Group className="mb-3">
                             <Form.Label>Palavra-passe</Form.Label>
                             <Form.Control name="password" type="password" placeholder="Palavra-passe" minLength={6} required />

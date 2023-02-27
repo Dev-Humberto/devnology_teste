@@ -3,16 +3,15 @@ import { Container, Row, Col, InputGroup, FormControl } from 'react-bootstrap';
 import { useThemeHook } from '../GlobalComponents/ThemeProvider';
 import { BiSearch } from 'react-icons/bi';
 import SearchFilter from 'react-filter-search';
-import ProductCard from '../components/ProductCard';
+import ProductCardFornecedor from './ProductCardFornecedor';
 
-const Home = () => {
-
+const Fornecedor1 = () => {
     const [theme] = useThemeHook();
     const [searchInput, setSearchInput] = useState('');
     const [productData, setProductData] = useState([]);
 
     async function getResponse(){
-        const res = await fetch('http://616d6bdb6dacbb001794ca17.mockapi.io/devnology/european_provider')
+        const res = await fetch('http://616d6bdb6dacbb001794ca17.mockapi.io/devnology/brazilian_provider')
                           .then(res=> res.json());
                           setProductData(await res);
     }
@@ -43,9 +42,8 @@ const Home = () => {
                     data={productData}
                     renderResults={results =>(
                         <Row className="justify-content-center">
-                            {console.log(results)}
                             {results.map((item, i)=>(
-                                <ProductCard data={item} key={i} />
+                                <ProductCardFornecedor data={item} key={i} />
                             ))}
                         </Row>
                     )}
@@ -56,4 +54,4 @@ const Home = () => {
     );
 };
 
-export default Home;
+export default Fornecedor1;

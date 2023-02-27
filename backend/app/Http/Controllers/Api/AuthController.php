@@ -12,39 +12,39 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-
+    //create user
     public function signup(SignupRequest $request){
-        $data = $request->validated();
-        /** @var \App\Models\User $user */
-        $user = User::create([  
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password'])
-        ]);
+      
+        $data =  $request->validated();
+        $data['password'] = bcrypt($data['password']);
+        $user = User::create($data);
 
+        //get token
         $token = $user->createToken('main')->plainTextToken;
-
+        //return user and token
         return response(compact('user', 'token'));
     }
 
+    //login function
     public function login(LoginRequest $request)
     {
         $credentials = $request->validated();
+
         if (!Auth::attempt($credentials)) {
             return response([
-                'message' => 'Provided email or password is incorrect'
+                'message' => 'Credenciais  incorretos'
             ], 422);
         }
 
-        /** @var \App\Models\User $user */
         $user = Auth::user();
         $token = $user->createToken('main')->plainTextToken;
         return response(compact('user', 'token'));
+
     }
 
+    //logout
     public function logout(Request $request)
     {
-        /** @var \App\Models\User $user */
         $user = $request->user();
         $user->currentAccessToken()->delete();
         return response('', 204);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container, Col, Row, Table} from 'react-bootstrap';
 import { useCart } from 'react-use-cart';
 import { useThemeHook } from '../GlobalComponents/ThemeProvider';
@@ -17,30 +17,47 @@ const Cart = () => {
         emptyCart,
     } = useCart();
 
+    const userStorage = JSON.parse(localStorage.getItem("USER"));
+    const tokenStorage = localStorage.getItem("ACCESS_TOKEN");
+    const [desableBtn, setDisableDtn] = useState('disabled');
+    const [desableBtnMgs, setDisableDtnMsg] = useState('Faça login');
+    const [user_id, setUserId] = useState(null);
     const buyItem = (id, qtde, price) => {
-        const user_id = 1;
-        const produto_id = id;
-        const quantidade = qtde;
-        const preco_unitario = price;
-        //produto_id', 'user_id','quantidade', 'preco_unitario
-        axiosClient.post("/compras", {produto_id, user_id, quantidade, preco_unitario})
+        if(userStorage){
+            setUserId(parseInt(userStorage.id));
+        }
+        
+        const product_id = id;
+        const quantity = qtde;
+        console.log("produto_id-", product_id, "quantity-",quantity, "user_id-", user_id);
+
+        axiosClient.post("/sales", {product_id, user_id, quantity},{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${tokenStorage}`
+              },
+        })
         .then((response) => {
-                console.log(response)
-                /*setLoading(false);
-                /*if (response.data.status === 200) {
-                    setUser(response.data.user);
-                    setToken(response.data.token);
-                    return <Navigate to = "/" />
-                }
-                if (response.data.status === "failed") {
-                    console.log('Failed');
-                }
+            if(response.status === 200){
+                window.location.href = '/my-account';
+                removeItem(product_id)
+            }
                 
-                */
-                return <Navigate to = "/my-account" />
+               // return <Navigate to = "/my-account" />
 
         })
     }
+
+    //verificar utilizador
+    useEffect(()=>{
+        if(userStorage){
+          if(userStorage.type === 'C' && tokenStorage){
+            setDisableDtn('');
+            setDisableDtnMsg('');
+          }
+        } 
+ 
+    },[]);
 
     return (
         <Container className="py-4 mt-5">
@@ -71,8 +88,8 @@ const Cart = () => {
                                     <td>
                                         <Button onClick={()=> updateItemQuantity(item.id, item.quantity - 1)} className="ms-2">-</Button>
                                         <Button onClick={()=> updateItemQuantity(item.id, item.quantity + 1)} className="ms-2">+</Button>
-                                        <Button variant="danger" onClick={()=> removeItem(item.id)} className="ms-2">Eliminar item</Button>
-                                        <Button variant="success" onClick={()=> buyItem(item.id, item.quantity, item.price)} className="ms-2">Finalizar compra</Button>
+                                        <Button variant="danger" onClick={()=> removeItem(item.id)} className="ms-2" title={desableBtnMgs}>Eliminar item</Button>
+                                        <Button variant="success" onClick={()=> buyItem(item.id, item.quantity, item.price)} className="ms-2" disabled={desableBtn} >Finalizar compra <br/><span style={{fontSize:'10px'}}>{desableBtnMgs}</span> </Button>
                                     </td>
                                 </tr>
                             )
@@ -95,12 +112,12 @@ const Cart = () => {
                                 <BsCartX size="1.7rem" />
                                 Limpar carrinho
                             </Button>
-                            <Button variant="success"
+                            {/*<Button variant="success"
                                 className="m-2"
                             >
                                 <BsCartCheck size="1.7rem" />
                                 Finalizar compra
-                            </Button>
+                            </Button> */}
                         </Col>
                     </Row>}
             </Row>
